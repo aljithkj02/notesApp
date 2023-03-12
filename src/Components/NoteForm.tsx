@@ -1,11 +1,28 @@
-import React from 'react'
+import React, { FormEvent, useRef, useState } from 'react'
 import { Button, Col, Form, Row, Stack } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import CreatableReactSelect from 'react-select/creatable'
+import { Note, NoteData, Tag } from '../Routes/AllRoutes'
 
-const NoteForm = () => {
+interface INoteFrom {
+    onSubmit: (data: NoteData) => void;
+}
+
+const NoteForm = ({ onSubmit }: INoteFrom) => {
+    const titleRef = useRef<HTMLInputElement>(null);
+    const markdownRef = useRef<HTMLTextAreaElement>(null);
+    const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+
+    const handleSubmit = (e: FormEvent) => {
+        e.preventDefault();
+        onSubmit({
+            title: titleRef.current!.value,
+            markdown: markdownRef.current!.value,
+            tags: []
+        })
+    }
     return (
-        <Form>
+        <Form onSubmit={handleSubmit}>
             <Stack gap={4}>
                 <Row>
                     <Col>
@@ -13,7 +30,7 @@ const NoteForm = () => {
                             <Form.Label>
                                 Title
                             </Form.Label>
-                            <Form.Control required />
+                            <Form.Control ref={titleRef} required />
                         </Form.Group>
                     </Col>
                     <Col>
@@ -21,7 +38,21 @@ const NoteForm = () => {
                             <Form.Label>
                                 Title
                             </Form.Label>
-                            <CreatableReactSelect isMulti />
+                            <CreatableReactSelect value={selectedTags.map(tag => {
+                                return {
+                                    label: tag.label, value: tag.id
+                                }
+                            })}
+                                onChange={tags => {
+                                    setSelectedTags(tags.map(tag => {
+                                        return {
+                                            label: tag.label,
+                                            id: tag.value
+                                        }
+                                    }))
+                                }}
+                                isMulti
+                            />
                         </Form.Group>
                     </Col>
                 </Row>
@@ -29,7 +60,7 @@ const NoteForm = () => {
                     <Form.Label>
                         Body
                     </Form.Label>
-                    <Form.Control required as="textarea"
+                    <Form.Control ref={markdownRef} required as="textarea"
                         rows={15}
                     />
                 </Form.Group>
