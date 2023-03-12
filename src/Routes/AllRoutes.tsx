@@ -3,7 +3,7 @@ import { Container } from 'react-bootstrap';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import { useLocalStorage } from '../Hooks/useLocalStorage';
-import { NewNote } from '../Pages';
+import { NewNote, NoteList } from '../Pages';
 
 export type Note = {
     id: string
@@ -61,7 +61,7 @@ const AllRoutes = () => {
     return (
         <Container className='my-4'>
             <Routes>
-                <Route path="/" element={<h1>Home</h1>} />
+                <Route path="/" element={<NoteList />} />
                 <Route path="/new" element={<NewNote onSubmit={onCreateNote}
                     onAddTag={addTag} availableTags={tags}
                 />}
